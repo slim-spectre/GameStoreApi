@@ -1,4 +1,3 @@
-You got it, man! Here is a solid, professional README.md in English. This will make your GitHub look top-tier and show any recruiter that you know exactly what you’re doing.
 🎮 GameStore — Fullstack Web Application
 
 This is a powerful web application for a game store, built using a modern fullstack tech stack. The project features a complete data lifecycle, from secure authentication to dynamic content management.
