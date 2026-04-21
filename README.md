@@ -1,62 +1,63 @@
+You got it, man! Here is a solid, professional README.md in English. This will make your GitHub look top-tier and show any recruiter that you know exactly what you’re doing.
 🎮 GameStore — Fullstack Web Application
 
-Це потужний веб-додаток для магазину ігор, побудований на сучасному стеку технологій. Проєкт реалізує повний цикл роботи з даними: від безпечної авторизації до динамічного управління контентом.
-🚀 Основний функціонал
+This is a powerful web application for a game store, built using a modern fullstack tech stack. The project features a complete data lifecycle, from secure authentication to dynamic content management.
+🚀 Key Features
 
-    Система авторизації: Реалізована через JWT (JSON Web Tokens). Паролі надійно зберігаються на сервері.
+    Authentication System: Fully implemented using JWT (JSON Web Tokens). Passwords are securely hashed and stored on the server.
 
-    Role-Based Access Control (RBAC): Розмежування прав доступу. Тільки користувачі з роллю Admin мають доступ до панелі керування.
+    Role-Based Access Control (RBAC): Strict permission management. Only users with the Admin role can access the management panel.
 
-    Адмін-панель: Повний CRUD-цикл (Create, Read, Update, Delete) для ігор. Адмін може додавати нові ігри, редагувати наявні або видаляти їх.
+    Admin Dashboard: A complete CRUD (Create, Read, Update, Delete) cycle for games. Admins can add new titles, edit details, or remove products.
 
-    Каталог ігор: Динамічний пошук, фільтрація за жанрами та сортування за ціною.
+    Dynamic Catalog: Features real-time search, genre filtering, and price sorting.
 
-    Кошик: Функціонал додавання ігор до кошика з локальним збереженням (LocalStorage), щоб дані не зникали після оновлення сторінки.
+    Shopping Cart: Persistent cart functionality using LocalStorage, ensuring user data remains even after a page refresh.
 
-    Інтерфейс: Повністю компонентний підхід на React із використанням React Router для навігації.
+    Modern UI: A component-based approach using React and React Router for seamless navigation.
 
-🛠 Технологічний стек
+🛠 Tech Stack
 Frontend
 
-    React 18 — інтерфейс користувача.
+    React 18 — Component-driven UI development.
 
-    React Router — маршрутизація та захист шляхів (Protected Routes).
+    React Router — Client-side routing and Protected Routes.
 
-    CSS3 — кастомний дизайн та анімації.
+    CSS3 — Custom styling, grid/flexbox layouts, and animations.
 
 Backend
 
-    ASP.NET Core (C#) — потужне та швидке API.
+    ASP.NET Core (C#) — High-performance RESTful API.
 
-    Entity Framework Core — робота з базою даних.
+    Entity Framework Core — ORM for database communication.
 
-    SQL Server — надійне збереження даних.
+    SQL Server — Relational database for persistent storage.
 
-    JWT Authentication — захист даних та ідентифікація користувачів.
+    JWT Authentication — Secure token-based identity management.
 
-📂 Структура проєкту
+📂 Project Structure
 
-    /pages — основні сторінки (Home, Admin, Login, Register, Cart).
+    /pages — Core views (Home, Admin, Login, Register, Cart).
 
-    /components — багаторазові елементи інтерфейсу (GameCard, GameForm).
+    /components — Reusable UI elements (GameCard, GameForm, Navigation).
 
-    App.jsx — головний центр управління станом, де реалізована логіка перевірки ролей та завантаження даних.
+    App.jsx — The "brain" of the app, handling global state, role verification, and initial data fetching.
 
-⚙️ Як запустити проєкт
-1. Бекенд (.NET)
+⚙️ Setup and Installation
+1. Backend (.NET)
 
-    Перейдіть у папку з API.
+    Navigate to the API folder.
 
-    Налаштуйте рядок підключення до БД у appsettings.json.
+    Configure your connection string in appsettings.json.
 
-    Виконайте dotnet ef database update для створення таблиць.
+    Run dotnet ef database update to generate the database schema.
 
-    Запустіть проект: dotnet run.
+    Launch the server: dotnet run.
 
-2. Фронтенд (React)
+2. Frontend (React)
 
-    Перейдіть у папку клієнта.
+    Navigate to the client folder.
 
-    Встановіть залежності: npm install.
+    Install dependencies: npm install.
 
-    Запустіть додаток: npm run dev.
+    Start the development server: npm run dev.
