@@ -34,6 +34,8 @@ public static class GamesEndpoints
 
         }).WithName(GetGameEndpointName);
 
+        
+
         group.MapPost("/", async (CreateGameDto newGame, GameStoreContext dbContext, IValidator<CreateGameDto> validator) =>
         {
             var result = await validator.ValidateAsync(newGame);
@@ -77,7 +79,7 @@ public static class GamesEndpoints
 
             return Results.NoContent();
 
-        }).RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = IdentityConstants.BearerScheme });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
 
 
         group.MapDelete("/{id}", async (int id,GameStoreContext dbContext) =>
@@ -87,6 +89,6 @@ public static class GamesEndpoints
                             .ExecuteDeleteAsync();
 
             return Results.NoContent(); 
-        }).RequireAuthorization(new AuthorizeAttribute { AuthenticationSchemes = IdentityConstants.BearerScheme });
+        }).RequireAuthorization(policy => policy.RequireRole("Admin"));
     }
 }

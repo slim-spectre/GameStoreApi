@@ -4,6 +4,8 @@ using GameStore.Api.Extensions;
 using GameStore.Api.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer; 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication; 
+using GameStore.Api;                      
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +13,14 @@ builder.Services.AddValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
+
+
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>() 
     .AddEntityFrameworkStores<GameStoreContext>();
+
+builder.Services.AddScoped<IClaimsTransformation, MyClaimsTransformation>();
+
 builder.Services.AddSwaggerGen(options =>
 {
 
@@ -49,7 +57,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
 });
 
-// Додай CORS тут, перед Build(), як ми домовлялися для React
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -69,16 +76,47 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Порядок мідлварів має значення!
 app.UseCors("AllowReactApp"); 
 
 app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapGamesEndpoints();
+app.MapUserEndpoints();
 app.MapGenresEndpoints();
 app.MapIdentityApi<IdentityUser>(); 
 
 app.MigrateDb();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string[] roles = { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    var adminEmail = "admin@gamestore.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        var admin = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+        var result = await userManager.CreateAsync(admin, "Admin123!"); 
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
+        }
+    }
+}
 
 app.Run();

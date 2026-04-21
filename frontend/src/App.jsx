@@ -28,9 +28,27 @@ function App() {
     const saved = localStorage.getItem("my_cart");
     return saved ? JSON.parse(saved) : [];
   });
+  const [userRole, setUserRole] = useState(null);
 
 
+  const fetchUserRole = async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
 
+        try {
+          const response = await fetch("http://localhost:5214/user/me", {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Відповідь сервера:", data); // ПЕРЕВІР ЦЕ В КОНСОЛІ
+            setUserRole(data.role || data.Role); 
+          }
+        } catch (err) {
+          console.error("Помилка:", err);
+        }
+    };
 
 
 
@@ -74,28 +92,34 @@ function App() {
     localStorage.setItem("my_cart",JSON.stringify(cart));
   },[cart]);
 
-  useEffect(() => {
-    Promise.all([
-      fetch("http://localhost:5214/games").then(res => {
-        if(!res.ok) throw new Error("Failed to load games");
-        return res.json();
-      }),
-      fetch("http://localhost:5214/genres").then(res => {
-        if(!res.ok) throw new Error("Failed to load genres");
-        return res.json();
-      })
-    ])
-    .then(([gamesData,genresData]) => {
-      setGames(gamesData);
-      setGenres(genresData);
-      setIsLoading(false);
-    })
-    .catch(err => {
-      console.log("Error while loading...",err);
+useEffect(() => {
+  const initApp = async () => {
+    try {
+      const [gamesRes, genresRes] = await Promise.all([
+        fetch("http://localhost:5214/games"),
+        fetch("http://localhost:5214/genres")
+      ]);
+
+      if (gamesRes.ok && genresRes.ok) {
+        setGames(await gamesRes.json());
+        setGenres(await genresRes.json());
+      }
+    } catch (err) {
+      console.error("Помилка завантаження даних:", err);
       setError(err.message);
+    } finally {
       setIsLoading(false);
-    });
-  }, []);
+    }
+
+    if (isAuth) {
+      await fetchUserRole();
+    } else {
+      setUserRole(null);
+    }
+  };
+
+  initApp();
+}, [isAuth]); 
 
   const handleAdd = async (gameData) => {
     const newGameDto = { ...gameData, releaseDate: new Date().toISOString().split("T")[0] };
@@ -212,7 +236,7 @@ function App() {
     <div className="container">
       <nav className="main-nav">
         <Link to="/">Store</Link>
-        <Link to="/admin">Admin Panel</Link>
+        {userRole === "Admin" && <Link to="/admin">Admin Panel</Link>}
         <Link to="/cart">Cart: {cart.length}</Link>
         {!isAuth ? (
           <>
@@ -255,13 +279,17 @@ function App() {
          />}/>
 
         <Route path='/admin' element={
-          <AdminPage
+          userRole === "Admin" ? (
+            <AdminPage
               games={sortedGames}
               genres={genres}
               onUpdate={(game) => navigate(`/admin/edit/${game.id}`)}
               onDelete={handleDelete}
               onAdd={handleAdd}
-              />
+            />
+          ) : (
+            <div className="error-message">Access Denied. Admins only!</div>
+          )
         } />
 
         <Route path='/register' element={
